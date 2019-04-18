@@ -23,7 +23,7 @@ class App extends Component {
         tag: 'audio',
         type: 'audio/ogg',
         ext: '.ogg',
-        gUM: { audio: true }
+        gUM: { audio: true, video: false }
       }
 
     this.setState({ media: value, mediaOptions })
@@ -53,7 +53,9 @@ class App extends Component {
           });
         }
       };
-    }).catch(e);
+    }).catch((e) => {
+      console.log(e);
+    });
 
     this.setState({ mediaSelected: true })
   }
@@ -61,13 +63,13 @@ class App extends Component {
   startRecord = (e) => {
     e.preventDefault()
     this.chunks = [];
-    this.recorder.start();
+    this.recorder && this.recorder.start();
     this.setState({ recording: true })
   }
 
   stopRecord = (e) => {
     e.preventDefault()
-    this.recorder.stop();
+    this.recorder && this.recorder.stop();
     this.setState({ recording: false })
   }
 
