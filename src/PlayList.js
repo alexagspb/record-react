@@ -44,7 +44,6 @@ class PlayList extends Component {
         currentMedia,
       };
     });
-    this.playAll()
   }
 
   getMediaElem = (item) => {
