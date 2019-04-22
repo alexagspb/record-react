@@ -42,8 +42,6 @@ class App extends Component {
         if (this.recorder.state === 'inactive') {
           let blob = new Blob(this.chunks, { type: mediaOptions.tag })
 
-          console.log(blob);
-
           this.setState(state => {
             const records = [...state.records, { type: mediaOptions.tag, blob: blob, id: ++state.counter, ext: mediaOptions.ext }];
 
