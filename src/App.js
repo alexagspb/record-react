@@ -71,6 +71,16 @@ class App extends Component {
     this.setState({ recording: false })
   }
 
+  removeRecord = (id) => {
+    this.setState(state => {
+      const records = state.records.filter((item) => item.id !== id)
+
+      return {
+        records,
+      };
+    });
+  }
+
   handleUpload = (blob) => {
     let xhr = new XMLHttpRequest();
 
@@ -97,7 +107,7 @@ class App extends Component {
             ? <div className='App_buttons'>
               <button onClick={this.startRecord} disabled={recording}>Старт</button>
               <button onClick={this.stopRecord} disabled={!recording}>Стоп</button>
-              <PlayList records={records} onClick={this.handleUpload} />
+              <PlayList records={records} onClick={this.handleUpload} onRemove={this.removeRecord} />
               {
                 recording && <h3>Идет запись...</h3>
               }

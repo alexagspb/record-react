@@ -10,23 +10,31 @@ class PlayList extends Component {
     currentMedia: 1
   }
 
+  getNextPlay = () => {
+    this.setState(state => {
+      const currentMedia = ++state.currentMedia
+
+      return {
+        currentMedia,
+      };
+    });
+    this.playAll()
+  }
+
   playAll = () => {
     const { currentMedia } = this.state
     if (this.Plays[currentMedia]) {
       this.Plays[currentMedia].play()
 
       this.Plays[currentMedia].onended = () => {
-        this.setState(state => {
-          const currentMedia = ++state.currentMedia
-
-          return {
-            currentMedia,
-          };
-        });
-        this.playAll()
+        this.getNextPlay()
       }
     } else {
-      this.setState({ currentMedia: 1 })
+      if (currentMedia < this.Plays.length) {
+        this.getNextPlay()
+      } else {
+        this.setState({ currentMedia: 1 })
+      }
     }
   }
 
@@ -58,7 +66,7 @@ class PlayList extends Component {
   }
 
   render() {
-    const { records, onClick } = this.props
+    const { records, onClick, onRemove } = this.props
 
     return (
       <div>
@@ -69,7 +77,10 @@ class PlayList extends Component {
         </div> : null}
         <ul>
           {records && records.map((item) => {
-            return <li key={item.id}>{this.getMediaElem(item)} <span className='upload_btn' onClick={() => onClick(item.blob)}>Загрузить на сервер</span></li>
+            return <li key={item.id}>{this.getMediaElem(item)}
+              <span className='upload_btn' onClick={() => onClick(item.blob)}>Загрузить на сервер</span>
+              <span className='remove_btn' onClick={() => onRemove(item.id)}>×</span>
+            </li>
           })}
         </ul>
       </div>
