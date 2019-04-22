@@ -61,7 +61,7 @@ class PlayList extends Component {
     if (item.type === 'audio') {
       return <span><audio controls src={url} ref={(elem) => { this.Plays[item.id] = elem }} /><a href={url} download={download}>Скачать {download}</a></span>
     } else {
-      return <span><video controls src={url} /><a href={url} download={download}>Скачать {download}</a></span>
+      return <span><video controls src={url} ref={(elem) => { this.Plays[item.id] = elem }} /><a href={url} download={download}>Скачать {download}</a></span>
     }
   }
 
