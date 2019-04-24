@@ -68,6 +68,8 @@ class PlayList extends Component {
     const { currentMedia } = this.state
     const audio = this.Plays[currentMedia];
 
+    console.log(audio.duration);
+
     this.fade(audio)
   }
 
@@ -75,7 +77,7 @@ class PlayList extends Component {
     const download = `${item.id}${item.ext}`
     let url = URL.createObjectURL(item.blob)
 
-    url = base64url
+    // url = base64url
 
     if (item.type === 'audio') {
       return <span>
