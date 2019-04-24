@@ -57,6 +57,22 @@ a:hover {
   background: #a7adf5;
 }
 
+.fadeout_btn {
+  display: inline-block;
+  vertical-align: top;
+  cursor: pointer;
+  background: #eee;
+  font-size: 12px;
+  border-radius: 5px;
+  margin: 10px 5px;
+  padding: 10px;
+  color: #000;
+}
+
+.fadeout_btn:hover {
+  background: #ccc;
+}
+
 .remove_btn {
   display: inline-block;
   vertical-align: top;
