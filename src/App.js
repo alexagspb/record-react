@@ -10,7 +10,8 @@ class App extends Component {
     mediaOptions: {},
     recording: false,
     records: [],
-    counter: 0
+    counter: 0,
+    stream: false
   }
   selectMediaType = (value) => {
     const mediaOptions = value === 'video' ? {
@@ -58,6 +59,22 @@ class App extends Component {
     this.setState({ mediaSelected: true })
   }
 
+  startStream = () => {
+    this.audioCtx = new AudioContext();
+    const source = this.audioCtx.createMediaStreamSource(this.stream);
+    const biquadFilter = this.audioCtx.createBiquadFilter();
+    biquadFilter.type = "lowshelf";
+    biquadFilter.frequency.value = 1000;
+    source.connect(biquadFilter);
+    biquadFilter.connect(this.audioCtx.destination);
+    this.setState({ stream: true })
+  }
+
+  stopStream = () => {
+    this.audioCtx.close();
+    this.setState({ stream: false })
+  }
+
   startRecord = (e) => {
     e.preventDefault()
     this.chunks = [];
@@ -98,7 +115,11 @@ class App extends Component {
   }
 
   render() {
-    const { media, recording, mediaSelected, records } = this.state
+    const { media, recording, mediaSelected, records, stream } = this.state
+
+    if (stream) {
+      return <div className="App"><button onClick={this.stopStream}>Остановить трансляцию</button></div>
+    }
 
     return (
       <div className="App">
@@ -107,6 +128,7 @@ class App extends Component {
             ? <div className='App_buttons'>
               <button onClick={this.startRecord} disabled={recording}>Старт</button>
               <button onClick={this.stopRecord} disabled={!recording}>Стоп</button>
+              <button onClick={this.startStream}>Начать трансляцию</button>
               <PlayList records={records} onClick={this.handleUpload} onRemove={this.removeRecord} />
               {
                 recording && <h3>Идет запись...</h3>
