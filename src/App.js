@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+// import SuperForm from 'react-superforms'
+import { SuperForm } from './superforms/index'
+
 import './App.css';
 
-import PlayList from './PlayList'
+import PlayList from './PlayListSrv'
 
 class App extends Component {
+
   state = {
     media: '',
     mediaSelected: false,
@@ -11,8 +15,10 @@ class App extends Component {
     recording: false,
     records: [],
     counter: 0,
-    stream: false
+    stream: false,
+    chunks: [],
   }
+
   selectMediaType = (value) => {
     const mediaOptions = value === 'video' ? {
       tag: 'video',
@@ -110,12 +116,62 @@ class App extends Component {
     xhr.send(blob);
   }
 
+  handleChange = ({ name, value }, index) => {
+    const chunks = this.state.chunks.slice(0)
+    chunks[index][name] = value
+    this.setState({
+      chunks
+    })
+  }
+
+  handleSubmit = (e) => {
+    e && e.preventDefault()
+
+    // sample_rate_hertz: 48000, 16000, 8000
+    // emotion: good, evil, neutral
+    // voice: alyss, jane, oksana, omazh
+
+    const chunks = this.state.chunks.map((item) => {
+      return item.title
+    })
+
+    const data = {
+      "chunks": chunks.length ? chunks : [" ", "рейс", "Москва", "Тула", "отходит от платформы номер", '1', "рейс Москва Тула отходит от платформы номер 1", " "],
+      params: {
+        "sample_rate_hertz": 48000,
+        "emotion": "neutral",
+        "voice": "oksana"
+      }
+    }
+
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', 'http://speech-kit.avto-pass.net/api')
+    xhr.setRequestHeader('Content-type', 'application/json')
+    xhr.send(JSON.stringify(data)) // Make sure to stringify
+    xhr.onload = () => {
+      const items = xhr.responseText.split(',')
+      let records = []
+
+      for (let i = 1; i < items.length; i += 2) {
+        records.push('data:audio/ogg;base64,' + items[i].slice(0, -1))
+      }
+      this.setState({ records })
+    }
+  }
+
+  pushChunk = (e) => {
+    e && e.preventDefault()
+    this.setState({
+      chunks: [...this.state.chunks, { title: '' }]
+    })
+  }
+
   componentDidMount() {
     this.selectMediaType('audio')
   }
 
   render() {
-    const { media, recording, mediaSelected, records, stream } = this.state
+    const { media, recording, mediaSelected, records, stream, chunks } = this.state
 
     if (stream) {
       return <div className="App"><button onClick={this.stopStream}>Остановить трансляцию</button></div>
@@ -133,6 +189,22 @@ class App extends Component {
               {
                 recording && <h3>Идет запись...</h3>
               }
+              <form onSubmit={this.handleSubmit}>
+                {JSON.stringify(chunks)}
+                {chunks.map((chunk, index) => {
+                  return (
+                    <SuperForm
+                      Component='div'
+                      key={index}
+                      index={index}
+                      value={chunk}
+                      onChange={this.handleChange}
+                    />
+                  )
+                })}
+                <button onClick={this.pushChunk}>+</button>
+                <button type='submit'>Отправить</button>
+              </form>
             </div>
             : <div>
               <label><input type="radio" name="media" value="video" onChange={() => this.selectMediaType('video')} checked={media === 'video'} />Видео</label>
@@ -140,7 +212,7 @@ class App extends Component {
               <button onClick={this.selectRecord}>Начать запись</button>
             </div>
         }
-      </div>
+      </div >
     );
   }
 }

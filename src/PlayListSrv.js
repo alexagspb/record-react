@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import base64url from './base64url';
 class PlayList extends Component {
   constructor(props) {
     super()
@@ -54,42 +55,16 @@ class PlayList extends Component {
     });
   }
 
-  fade = (audio) => {
-    if (audio.volume.toFixed(2) > 0) {
-      audio.volume -= 0.1;
-      setTimeout(() => this.fade(audio), 200);
-    } else {
-      audio.pause();
-    }
-  }
-
-  fadeOut = () => {
-    const { currentMedia } = this.state
-    const audio = this.Plays[currentMedia];
-
-    console.log(audio.duration);
-
-    this.fade(audio)
-  }
-
-  getMediaElem = (item) => {
-    const download = `${item.id}${item.ext}`
-    let url = URL.createObjectURL(item.blob)
-
+  getMediaElem = (url, id) => {
     // url = base64url
 
-    if (item.type === 'audio') {
-      return <span>
-        <audio controls src={url} ref={(elem) => { this.Plays[item.id] = elem }} />
-        <a href={url} download={download}>Скачать {download}</a>
-      </span>
-    } else {
-      return <span><video controls src={url} ref={(elem) => { this.Plays[item.id] = elem }} /><a href={url} download={download}>Скачать {download}</a></span>
-    }
+    return <span>
+      <audio controls src={url} ref={(elem) => { this.Plays[id] = elem }} />
+    </span>
   }
 
   render() {
-    const { records, onClick, onRemove } = this.props
+    const { records } = this.props
 
     return (
       <div>
@@ -99,12 +74,8 @@ class PlayList extends Component {
           <button onClick={this.pause}>Пауза</button>
         </div> : null}
         <ul>
-          {records && records.map((item) => {
-            return <li key={item.id}>{this.getMediaElem(item)}
-              <span className='upload_btn' onClick={() => onClick(item.blob)}>Загрузить на сервер</span>
-              <span className='fadeout_btn' onClick={this.fadeOut}>Fade Out</span>
-              <span className='remove_btn' onClick={() => onRemove(item.id)}>×</span>
-            </li>
+          {records && records.map((item, index) => {
+            return <li key={index}>{this.getMediaElem(item, index)}</li>
           })}
         </ul>
       </div>
