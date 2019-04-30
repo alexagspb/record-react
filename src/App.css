@@ -92,3 +92,38 @@ a:hover {
 .remove_btn:hover {
   background: #ccc;
 }
+
+.App_form_container {
+  position: relative;
+}
+
+.App_form_remove {
+  position: absolute;
+  top: 50%;
+  right: -40px;
+  margin-top: -9px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #eee;
+  color: #555;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 31px;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.App_form_remove:hover {
+  background: #ccc;
+  color: #222;
+}
+
+.App_radio {
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  width: 400px;
+}

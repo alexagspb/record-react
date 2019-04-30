@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import base64url from './base64url';
+// import base64url from './base64url';
 class PlayList extends Component {
   constructor(props) {
     super()
@@ -8,7 +8,7 @@ class PlayList extends Component {
   }
 
   state = {
-    currentMedia: 1
+    currentMedia: 0
   }
 
   getNextPlay = () => {
@@ -34,7 +34,7 @@ class PlayList extends Component {
       if (currentMedia < this.Plays.length) {
         this.getNextPlay()
       } else {
-        this.setState({ currentMedia: 1 })
+        this.setState({ currentMedia: 0 })
       }
     }
   }
