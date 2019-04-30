@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-// import SuperForm from 'react-superforms'
-import { SuperForm } from './superforms/index'
+import SuperForm from 'react-superforms'
 
 import './App.css';
 
@@ -231,6 +230,7 @@ class App extends Component {
                         Component='div'
                         index={index}
                         value={chunk}
+                        layout={['title']}
                         schema={{
                           title: {
                             label: 'Введите звуковую единицу',
