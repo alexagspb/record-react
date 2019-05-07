@@ -29,31 +29,6 @@ class App extends Component {
   }
 
   selectRecord = (e) => {
-    e.preventDefault()
-
-    const { mediaOptions } = this.state
-
-    navigator.mediaDevices.getUserMedia(mediaOptions.gUM).then(_stream => {
-      this.stream = _stream;
-      this.recorder = new MediaRecorder(this.stream);
-      this.recorder.ondataavailable = e => {
-        this.chunks.push(e.data);
-        if (this.recorder.state === 'inactive') {
-          let blob = new Blob(this.chunks, { type: mediaOptions.tag })
-
-          this.setState(state => {
-            const records = [...state.records, { type: mediaOptions.tag, blob: blob, id: ++state.counter, ext: mediaOptions.ext }];
-
-            return {
-              records,
-            };
-          });
-        }
-      };
-    }).catch((e) => {
-      console.log(e);
-    });
-
     this.setState({ playType: 'voiсe' })
   }
 
@@ -169,6 +144,31 @@ class App extends Component {
 
   resetRecords = () => {
     this.setState({ records: [] })
+  }
+
+  componentDidMount() {
+    const { mediaOptions } = this.state
+
+    navigator.mediaDevices.getUserMedia(mediaOptions.gUM).then(_stream => {
+      this.stream = _stream;
+      this.recorder = new MediaRecorder(this.stream);
+      this.recorder.ondataavailable = e => {
+        this.chunks.push(e.data);
+        if (this.recorder.state === 'inactive') {
+          let blob = new Blob(this.chunks, { type: mediaOptions.tag })
+
+          this.setState(state => {
+            const records = [...state.records, { type: mediaOptions.tag, blob: blob, id: ++state.counter, ext: mediaOptions.ext }];
+
+            return {
+              records,
+            };
+          });
+        }
+      };
+    }).catch((e) => {
+      console.log(e);
+    });
   }
 
   render() {

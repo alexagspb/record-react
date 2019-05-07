@@ -23,6 +23,7 @@ class PlayList extends Component {
 
   playAll = () => {
     const { currentMedia } = this.state
+
     if (this.Plays[currentMedia]) {
       this.Plays[currentMedia].play()
 
@@ -45,8 +46,11 @@ class PlayList extends Component {
   }
 
   reset = () => {
+    const { currentMedia } = this.state
+    this.Plays[currentMedia].load()
+
     this.setState(state => {
-      const currentMedia = 1
+      const currentMedia = 0
 
       return {
         currentMedia,
