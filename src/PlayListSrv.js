@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-// import base64url from './base64url';
 class PlayList extends Component {
   constructor(props) {
     super()
@@ -56,11 +55,20 @@ class PlayList extends Component {
   }
 
   getMediaElem = (url, id) => {
-    // url = base64url
-
     return <span>
       <audio controls src={url} ref={(elem) => { this.Plays[id] = elem }} />
     </span>
+  }
+
+
+  componentDidMount() {
+    const { autoplay } = this.props
+
+    console.log(autoplay);
+
+    if (autoplay) {
+      this.playAll()
+    }
   }
 
   render() {
