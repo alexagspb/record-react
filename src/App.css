@@ -35,7 +35,9 @@ label {
 input {
   display: inline-block;
   vertical-align: middle;
-  margin: -4px 5px 0 0px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  height: 24px;
 }
 a:hover {
   text-decoration: none;

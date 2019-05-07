@@ -7,10 +7,6 @@ import PlayList from './PlayListSrv'
 
 class App extends Component {
 
-  // sample_rate_hertz: 48000, 16000, 8000
-  // emotion: good, evil, neutral
-  // voice: alyss, jane, oksana, omazh
-
   state = {
     playType: '',
     mediaOptions: {
@@ -125,9 +121,7 @@ class App extends Component {
 
     const { voice, emotion, rate } = this.state
 
-    const chunks = this.state.chunks.map((item) => {
-      return item.title
-    })
+    const chunks = this.state.chunks.map((item) => item.title).filter((item) => !!item)
 
     const data = {
       "chunks": chunks.length ? chunks : ["рейс", "Москва", "Тула", "отходит от платформы номер", '1', "рейс Москва Тула отходит от платформы номер 1"],
@@ -167,22 +161,14 @@ class App extends Component {
     })
   }
 
-  handleVoiceChange = (e) => {
+  handleRadioChange = (e, type) => {
     this.setState({
-      voice: e.target.value
+      [type]: e.target.value
     })
   }
 
-  handleEmotionChange = (e) => {
-    this.setState({
-      emotion: e.target.value
-    })
-  }
-
-  handleRateChange = (e) => {
-    this.setState({
-      rate: e.target.value
-    })
+  resetRecords = () => {
+    this.setState({ records: [] })
   }
 
   render() {
@@ -194,93 +180,101 @@ class App extends Component {
 
     return (
       <div className="App">
-        <div className='App_buttons'>
-          <button onClick={this.startStream}>Начать трансляцию</button>
+        <button onClick={this.startStream}>Начать трансляцию</button>
 
-          {!playType && <div>
-            <button onClick={this.startStream}>Начать запись голоса</button>
-            <button onClick={() => { this.setState({ playType: 'data' }) }}>Начать ввод данных</button>
-          </div>
-          }
-          {playType === 'voice' ?
-            <div>
-              <button onClick={this.startRecord} disabled={recording}>Начать запись</button>
-              <button onClick={this.stopRecord} disabled={!recording}>Остановить запись</button>
-              {recording && <h3>Идет запись...</h3>}
+        {records && records.length
+          ? <PlayList
+            records={records}
+            onClick={this.handleUpload}
+            onRemove={this.removeRecord}
+            onReset={this.resetRecords}
+            autoplay={true}
+          />
+          :
+          <div className='App_buttons'>
+            {!playType && <div>
+              <button onClick={this.startStream}>Начать запись голоса</button>
+              <button onClick={() => { this.setState({ playType: 'data' }) }}>Начать ввод данных</button>
             </div>
-            : null
-          }
+            }
+            {playType === 'voice' ?
+              <div>
+                <button onClick={this.startRecord} disabled={recording}>Начать запись</button>
+                <button onClick={this.stopRecord} disabled={!recording}>Остановить запись</button>
+                {recording && <h3>Идет запись...</h3>}
+              </div>
+              : null
+            }
 
-          {playType === 'data' ? <div>
-            <form onSubmit={this.handleSubmit}>
-              {chunks.map((chunk, index) => {
-                return (
-                  <div className='App_form_container' key={index}>
-                    <SuperForm
-                      Component='div'
-                      index={index}
-                      value={chunk}
-                      layout={['title']}
-                      schema={{
-                        title: {
-                          label: 'Введите звуковую единицу',
-                        },
-                      }}
-                      onChange={this.handleChange}
-                    />
-                    <div className='App_form_remove' onClick={e => {
-                      this.handleDelete(index)
-                    }}>
-                      ×
+            {playType === 'data' ? <div>
+              <form onSubmit={this.handleSubmit}>
+                {chunks.map((chunk, index) => {
+                  return (
+                    <div className='App_form_container' key={index}>
+                      <SuperForm
+                        Component='div'
+                        index={index}
+                        value={chunk}
+                        layout={['title']}
+                        schema={{
+                          title: {
+                            label: 'Введите звуковую единицу',
+                          },
+                        }}
+                        onChange={this.handleChange}
+                      />
+                      <div className='App_form_remove' onClick={e => {
+                        this.handleDelete(index)
+                      }}>
+                        ×
                     </div>
-                  </div>
-                )
-              })}
-              <button onClick={this.pushChunk}>+</button>
-              <button type='submit'>Показать плейлист</button>
-            </form>
+                    </div>
+                  )
+                })}
+                <button onClick={this.pushChunk}>+</button>
+                <button type='submit'>Показать плейлист</button>
+              </form>
 
-            <div className="App_radio">
-              {voices.map((item, index) => {
-                return (
-                  <label key={index}>
-                    <input type="radio" name='voice' value={item}
-                      checked={this.state.voice === item}
-                      onChange={this.handleVoiceChange} />
-                    {item}
-                  </label>
-                )
-              })}
+              <div className="App_radio">
+                {voices.map((item, index) => {
+                  return (
+                    <label key={index}>
+                      <input type="radio" name='voice' value={item}
+                        checked={this.state.voice === item}
+                        onChange={(e) => this.handleRadioChange(e, 'voice')} />
+                      {item}
+                    </label>
+                  )
+                })}
+              </div>
+              <div className="App_radio">
+                {emotions.map((item, index) => {
+                  return (
+                    <label key={index}>
+                      <input type="radio" name='emotion' value={item}
+                        checked={this.state.emotion === item}
+                        onChange={(e) => this.handleRadioChange(e, 'emotion')} />
+                      {item}
+                    </label>
+                  )
+                })}
+              </div>
+              <div className="App_radio">
+                {rates.map((item, index) => {
+                  return (
+                    <label key={index}>
+                      <input type="radio" name='rate' value={item}
+                        checked={this.state.rate === item}
+                        onChange={(e) => this.handleRadioChange(e, 'rate')} />
+                      {item}
+                    </label>
+                  )
+                })}
+              </div>
             </div>
-            <div className="App_radio">
-              {emotions.map((item, index) => {
-                return (
-                  <label key={index}>
-                    <input type="radio" name='emotion' value={item}
-                      checked={this.state.emotion === item}
-                      onChange={this.handleEmotionChange} />
-                    {item}
-                  </label>
-                )
-              })}
-            </div>
-            <div className="App_radio">
-              {rates.map((item, index) => {
-                return (
-                  <label key={index}>
-                    <input type="radio" name='rate' value={item}
-                      checked={this.state.rate === item}
-                      onChange={this.handleRateChange} />
-                    {item}
-                  </label>
-                )
-              })}
-            </div>
+              : null}
           </div>
-            : null}
-        </div>
-
-        <PlayList records={records} onClick={this.handleUpload} onRemove={this.removeRecord} autoplay={true} />
+        }
       </div >
     );
   }

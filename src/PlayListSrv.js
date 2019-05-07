@@ -64,15 +64,13 @@ class PlayList extends Component {
   componentDidMount() {
     const { autoplay } = this.props
 
-    console.log(autoplay);
-
     if (autoplay) {
       this.playAll()
     }
   }
 
   render() {
-    const { records } = this.props
+    const { records, onReset } = this.props
 
     return (
       <div>
@@ -81,6 +79,7 @@ class PlayList extends Component {
           <button onClick={this.reset}>Начать сначала</button>
           <button onClick={this.pause}>Пауза</button>
         </div> : null}
+        <button onClick={onReset}>Вернуться назад</button>
         <ul>
           {records && records.map((item, index) => {
             return <li key={index}>{this.getMediaElem(item, index)}</li>
