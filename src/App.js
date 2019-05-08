@@ -166,7 +166,6 @@ class App extends Component {
 
           this.setState(state => {
             const records = [...state.records, { type: mediaOptions.tag, blob: blob, id: ++state.counter, ext: mediaOptions.ext }];
-
             return {
               records,
             };
@@ -188,7 +187,14 @@ class App extends Component {
     return (
       <div className="App">
         <button onClick={this.startStream}>Начать трансляцию</button>
-
+        {playType === 'voice' ?
+          <div>
+            <button onClick={this.startRecord} disabled={recording}>Начать запись</button>
+            <button onClick={this.stopRecord} disabled={!recording}>Остановить запись</button>
+            {recording && <h3>Идет запись...</h3>}
+          </div>
+          : null
+        }
         {records && records.length
           ? <PlayList
             records={records}
@@ -200,17 +206,9 @@ class App extends Component {
           :
           <div className='App_buttons'>
             {!playType && <div>
-              <button onClick={this.startStream}>Начать запись голоса</button>
+              <button onClick={() => { this.setState({ playType: 'voice' }) }}>Начать запись голоса</button>
               <button onClick={() => { this.setState({ playType: 'data' }) }}>Начать ввод данных</button>
             </div>
-            }
-            {playType === 'voice' ?
-              <div>
-                <button onClick={this.startRecord} disabled={recording}>Начать запись</button>
-                <button onClick={this.stopRecord} disabled={!recording}>Остановить запись</button>
-                {recording && <h3>Идет запись...</h3>}
-              </div>
-              : null
             }
 
             {playType === 'data' ? <div>

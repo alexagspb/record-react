@@ -59,6 +59,10 @@ class PlayList extends Component {
   }
 
   getMediaElem = (url, id) => {
+    if (url.blob) {
+      url = URL.createObjectURL(url.blob)
+    }
+
     const download = `${id + 1}.ogg`
     return <span>
       <audio controls src={url} ref={(elem) => { this.Plays[id] = elem }} />
