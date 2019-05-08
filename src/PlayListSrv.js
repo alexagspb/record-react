@@ -59,8 +59,10 @@ class PlayList extends Component {
   }
 
   getMediaElem = (url, id) => {
+    const download = `${id + 1}.ogg`
     return <span>
       <audio controls src={url} ref={(elem) => { this.Plays[id] = elem }} />
+      <a href={url} download={download}>Скачать {download}</a>
     </span>
   }
 
