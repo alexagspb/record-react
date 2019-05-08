@@ -87,11 +87,11 @@ class App extends Component {
     const chunks = this.state.chunks.slice(0)
     chunks[index][name] = value
     this.setState({
-      chunks
+      chunks,
     })
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = (e, demo) => {
     e && e.preventDefault()
 
     const { voice, emotion, rate } = this.state
@@ -99,7 +99,10 @@ class App extends Component {
     const chunks = this.state.chunks.map((item) => item.title).filter((item) => !!item)
 
     const data = {
-      "chunks": chunks.length ? chunks : ["рейс", "Москва", "Тула", "отходит от платформы номер", '1', "рейс Москва Тула отходит от платформы номер 1"],
+      "chunks": demo ? ["рейс Москва Тула отходит от платформы номер 1",
+        "Уважаемые пассажиры, при выходе из автобуса не забывайте свои вещи. При обнаружении забытых вещей сообщайте водителю автобуса",
+        "рейс Тула Москва прибывает на платформу номер 2"
+      ] : chunks,
       params: {
         "sample_rate_hertz": +rate,
         emotion,
@@ -144,6 +147,10 @@ class App extends Component {
 
   resetRecords = () => {
     this.setState({ records: [] })
+  }
+
+  playDemo = (e) => {
+    this.handleSubmit(e, 'demo')
   }
 
   componentDidMount() {
@@ -232,7 +239,8 @@ class App extends Component {
                   )
                 })}
                 <button onClick={this.pushChunk}>+</button>
-                <button type='submit'>Показать плейлист</button>
+                {chunks && chunks.length ? <button type='submit'>Воспроизвести</button> : null}
+                <button onClick={this.playDemo}>Демо</button>
               </form>
 
               <div className="App_radio">
