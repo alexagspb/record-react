@@ -3,7 +3,7 @@ import SuperForm from 'react-superforms'
 
 import './App.css';
 
-import PlayList from './PlayListSrv'
+import PlayList from './PlayList'
 
 class App extends Component {
 
@@ -69,6 +69,10 @@ class App extends Component {
         records,
       };
     });
+  }
+
+  updateRecords = (records) => {
+    this.setState({ records })
   }
 
   handleUpload = (blob) => {
@@ -201,6 +205,7 @@ class App extends Component {
             onClick={this.handleUpload}
             onRemove={this.removeRecord}
             onReset={this.resetRecords}
+            updateRecords={this.updateRecords}
             autoplay={true}
           />
           :
