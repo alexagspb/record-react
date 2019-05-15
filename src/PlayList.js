@@ -23,7 +23,6 @@ class PlayList extends Component {
   }
 
   playAll = () => {
-
     const { currentMedia } = this.state
 
     if (this.Plays[currentMedia]) {
@@ -48,8 +47,9 @@ class PlayList extends Component {
   }
 
   reset = () => {
-    const { currentMedia } = this.state
-    this.Plays[currentMedia].load()
+    this.Plays.forEach((item) => {
+      item.load()
+    })
 
     this.setState(state => {
       const currentMedia = 0
@@ -74,6 +74,9 @@ class PlayList extends Component {
     </span>
   }
 
+  componentWillReceiveProps(newProps) {
+    this.setState({ records: newProps.records });
+  }
 
   componentDidMount() {
     const { autoplay, records } = this.props
@@ -90,7 +93,12 @@ class PlayList extends Component {
     const { records } = this.state
 
     const listItems = records.map((item, index) => {
+      if (item.blob) {
+        item = URL.createObjectURL(item.blob)
+      }
+
       const id = item.slice(-8)
+
       return <li key={id} data-id={item}>{this.getMediaElem(item, id, index)}</li>
     })
 
