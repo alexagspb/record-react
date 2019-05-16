@@ -242,7 +242,7 @@ class App extends Component {
                   )
                 })}
                 <button onClick={this.pushChunk}>+</button>
-                {chunks && chunks.length ? <button type='submit'>Воспроизвести</button> : null}
+                {chunks && chunks.length ? <button type='submit'>Плейлист</button> : null}
                 <button onClick={this.playDemo}>Демо</button>
               </form>
 

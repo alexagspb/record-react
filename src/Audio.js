@@ -30,7 +30,7 @@ class Audio extends Component {
     componentDidMount() {
         const { onEnded } = this.props
         this.elem.onended = () => {
-            onEnded()
+            onEnded && onEnded()
         }
     }
 

@@ -15,50 +15,38 @@ class PlayList extends Component {
     elems: {}
   }
 
-  getNextPlay = () => {
-    this.setState(state => {
-      const currentMedia = ++state.currentMedia
+  next = () => {
+    const { records } = this.props
+    let { currentMedia } = this.state
 
-      return {
-        currentMedia
-      };
-    });
-    this.playAll()
+    if (currentMedia + 1 <= records.length) {
+      this.setState(state => {
+        return {
+          currentMedia: currentMedia + 1
+        };
+      });
+
+      this.play()
+    }
+
+    if (currentMedia + 1 === records.length) {
+      this.setState({ playing: false, currentMedia: 0 })
+    }
   }
 
-  playAll = () => {
+  play = () => {
     const { currentMedia } = this.state
 
     this.setState({ playing: true, elems: { [currentMedia]: 'play' } })
-
-    // if (this.Plays[currentMedia]) {
-    //   this.Plays[currentMedia].elem.play()
-
-    //   this.Plays[currentMedia].elem.onended = () => {
-    //     this.getNextPlay()
-    //   }
-    // } else {
-    //   if (currentMedia < this.Plays.length) {
-    //     this.getNextPlay()
-    //   } else {
-    //     this.setState({ currentMedia: 0 })
-    //   }
-    // }
   }
 
   pause = () => {
     const { currentMedia } = this.state
 
-    // this.Plays[currentMedia].elem.pause()
-
     this.setState({ playing: false, elems: { [currentMedia]: 'pause' } })
   }
 
   reset = () => {
-    this.Plays.forEach((audio) => {
-      audio.elem.load()
-    })
-
     this.setState(state => {
       const currentMedia = 0
 
@@ -70,14 +58,14 @@ class PlayList extends Component {
     });
   }
 
-  getMediaElem = (url, id, index, status) => {
+  getMediaElem = (url, id, status) => {
     if (url.blob) {
       url = URL.createObjectURL(url.blob)
     }
 
     const download = `${id}.ogg`
     return <span>
-      <Audio controls={false} src={url} autoplay={false} status={status} volume="0.1" onEnded={this.getNextPlay} />
+      <Audio controls={false} src={url} autoplay={false} status={status} volume="0.1" onEnded={() => this.next()} />
       <a href={url} download={download}>Скачать {download}</a>
     </span>
   }
@@ -93,7 +81,7 @@ class PlayList extends Component {
 
     if (autoplay) {
       setTimeout(() => {
-        this.playAll()
+        this.play()
       }, 0);
     }
   }
@@ -101,9 +89,6 @@ class PlayList extends Component {
   render() {
     const { onReset } = this.props
     const { records, playing, elems } = this.state
-
-
-
 
     const listItems = records.map((item, index) => {
       if (item.blob) {
@@ -114,13 +99,13 @@ class PlayList extends Component {
 
       const id = item.slice(-8)
 
-      return <li key={id} data-id={item}>{this.getMediaElem(item, id, index, status)}</li>
+      return <li key={id} data-id={item}>{this.getMediaElem(item, id, status)}</li>
     })
 
     return (
       <div>
         {records ? <div>
-          <button onClick={this.playAll} disabled={playing}>Воспроизведение</button>
+          <button onClick={this.play} disabled={playing}>Воспроизведение</button>
           <button onClick={this.reset}>Начать сначала</button>
           <button onClick={this.pause} disabled={!playing}>Пауза</button>
         </div> : null}
