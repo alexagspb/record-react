@@ -6,6 +6,34 @@ class Audio extends Component {
         return false
     }
 
+    componentWillReceiveProps(newProps) {
+        const { status } = newProps
+
+        switch (status) {
+            case 'play':
+                this.elem.play()
+                break;
+
+            case 'pause':
+                this.elem.pause()
+                break;
+
+            case 'reset':
+                this.elem.load()
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    componentDidMount() {
+        const { onEnded } = this.props
+        this.elem.onended = () => {
+            onEnded()
+        }
+    }
+
     render() {
         const { src, controls, autoplay, volume } = this.props
 
