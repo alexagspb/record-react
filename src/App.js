@@ -185,12 +185,12 @@ class App extends Component {
     const { recording, records, stream, chunks, voices, emotions, rates, playType } = this.state
 
     if (stream) {
-      return <div className="App"><button onClick={this.stopStream}>Остановить трансляцию</button></div>
+      return <div className="App"><button onClick={this.stopStream}>Закончить голосовое сообщение</button></div>
     }
 
     return (
       <div className="App">
-        <button onClick={this.startStream}>Начать трансляцию</button>
+        <button onClick={this.startStream}>Голосовое сообщение</button>
         {playType === 'voice' ?
           <div>
             <button onClick={this.startRecord} disabled={recording}>Начать запись</button>
@@ -206,7 +206,7 @@ class App extends Component {
             onRemove={this.removeRecord}
             onReset={this.resetRecords}
             updateRecords={this.updateRecords}
-            autoplay={true}
+            autoplay={false}
           />
           :
           <div className='App_buttons'>

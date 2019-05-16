@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Sortable from 'react-sortablejs';
+
+import Audio from './Audio'
 class PlayList extends Component {
   constructor(props) {
     super()
@@ -9,6 +11,7 @@ class PlayList extends Component {
   state = {
     currentMedia: 0,
     records: [],
+    playing: false
   }
 
   getNextPlay = () => {
@@ -16,7 +19,7 @@ class PlayList extends Component {
       const currentMedia = ++state.currentMedia
 
       return {
-        currentMedia,
+        currentMedia
       };
     });
     this.playAll()
@@ -25,10 +28,12 @@ class PlayList extends Component {
   playAll = () => {
     const { currentMedia } = this.state
 
-    if (this.Plays[currentMedia]) {
-      this.Plays[currentMedia].play()
+    this.setState({ playing: true })
 
-      this.Plays[currentMedia].onended = () => {
+    if (this.Plays[currentMedia]) {
+      this.Plays[currentMedia].elem.play()
+
+      this.Plays[currentMedia].elem.onended = () => {
         this.getNextPlay()
       }
     } else {
@@ -43,12 +48,14 @@ class PlayList extends Component {
   pause = () => {
     const { currentMedia } = this.state
 
-    this.Plays[currentMedia].pause()
+    this.Plays[currentMedia].elem.pause()
+
+    this.setState({ playing: false })
   }
 
   reset = () => {
-    this.Plays.forEach((item) => {
-      item.load()
+    this.Plays.forEach((audio) => {
+      audio.elem.load()
     })
 
     this.setState(state => {
@@ -56,6 +63,7 @@ class PlayList extends Component {
 
       return {
         currentMedia,
+        playing: false
       };
     });
   }
@@ -67,7 +75,7 @@ class PlayList extends Component {
 
     const download = `${id}.ogg`
     return <span>
-      <audio controls src={url} ref={(elem) => {
+      <Audio controls={false} src={url} autoplay={false} volume="0.1" ref={(elem) => {
         this.Plays[index] = elem
       }} />
       <a href={url} download={download}>Скачать {download}</a>
@@ -84,13 +92,15 @@ class PlayList extends Component {
     this.setState({ records });
 
     if (autoplay) {
-      this.playAll()
+      setTimeout(() => {
+        this.playAll()
+      }, 0);
     }
   }
 
   render() {
     const { onReset } = this.props
-    const { records } = this.state
+    const { records, playing } = this.state
 
     const listItems = records.map((item, index) => {
       if (item.blob) {
@@ -104,16 +114,17 @@ class PlayList extends Component {
 
     return (
       <div>
-        {records && records.length > 1 ? <div>
-          <button onClick={this.playAll}>Воспроизвести все</button>
+        {records ? <div>
+          <button onClick={this.playAll} disabled={playing}>Воспроизведение</button>
           <button onClick={this.reset}>Начать сначала</button>
-          <button onClick={this.pause}>Пауза</button>
+          <button onClick={this.pause} disabled={!playing}>Пауза</button>
         </div> : null}
         <button onClick={onReset}>Вернуться назад</button>
         <Sortable
           tag="ul"
           onChange={(order) => {
             this.setState({ records: order });
+            this.reset()
           }}
         >
           {listItems}
@@ -122,27 +133,6 @@ class PlayList extends Component {
       </div>
     )
   }
-
-  // render() {
-  //   const { records, onReset } = this.props
-
-  //   return (
-  //     <div>
-  //       {records && records.length > 1 ? <div>
-  //         <button onClick={this.playAll}>Воспроизвести все</button>
-  //         <button onClick={this.reset}>Начать сначала</button>
-  //         <button onClick={this.pause}>Пауза</button>
-  //       </div> : null}
-  //       <button onClick={onReset}>Вернуться назад</button>
-  //       <ul>
-  //         {records && records.map((item, index) => {
-  //           return <li key={index}>{this.getMediaElem(item, index)}</li>
-  //         })}
-  //       </ul>
-  //     </div>
-  //   )
-  // }
-
 }
 
 export default PlayList
