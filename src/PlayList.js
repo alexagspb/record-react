@@ -91,13 +91,16 @@ class PlayList extends Component {
     const { records, playing, elems } = this.state
 
     const listItems = records.map((item, index) => {
+      let id;
+
       if (item.blob) {
+        id = item.id
         item = URL.createObjectURL(item.blob)
+      } else {
+        id = item.slice(-8)
       }
 
       const status = elems[index] || 'reset'
-
-      const id = item.slice(-8)
 
       return <li key={id} data-id={item}>{this.getMediaElem(item, id, status)}</li>
     })
